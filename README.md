@@ -1,5 +1,15 @@
 # Multi-Cloud "Lighthouse" Disaster Recovery Framework
 
+## Architecture Diagram
+
+```mermaid
+graph TD
+  PrimaryCloud(AWS) -->|Sync| StandbyCloud(Azure)
+  Orchestrator -->|Monitor| PrimaryCloud
+  Orchestrator -->|Failover| StandbyCloud
+```
+
+
 A production-ready Terraform project demonstrating a hybrid-cloud Disaster Recovery (DR) strategy between **AWS (Primary)** and **GCP (Standby)**.
 
 
