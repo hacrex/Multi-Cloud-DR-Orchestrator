@@ -6,26 +6,19 @@
 #Security Group for the primary instance
 resource "aws_security_group" "lighthouse_sg" {
   name        = "lighthouse-primary-sg"
-  description = "Allow SSH and k3s traffic"
+  description = "Restrict administrative SSH access for the DR demonstration"
   vpc_id      = aws_vpc.primary.id
 
-  # SSH Rule
   ingress {
+    description = "SSH from the explicitly approved administrator CIDR"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # In prod, you'd restrict this to your IP
+    cidr_blocks = [var.admin_cidr]
   }
 
-  # K3s API
-  ingress {
-    from_port   = 6443
-    to_port     = 6443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  #Outbound Traffic
+  # The K3s API is intentionally not public. Use an approved private access path,
+  # a bastion, VPN, or port-forwarding only in a disposable test environment.
   egress {
     from_port   = 0
     to_port     = 0
@@ -33,8 +26,11 @@ resource "aws_security_group" "lighthouse_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "lighthouse-sg" }
-
+  tags = {
+    Name        = "lighthouse-primary-sg"
+    ManagedBy   = "Terraform"
+    Environment = "demo"
+  }
 }
 
 # Ubuntu AMI
@@ -50,7 +46,7 @@ data "aws_ami" "ubuntu" {
 #create key pair
 resource "aws_key_pair" "lighthouse_auth" {
   key_name   = "lighthouse-key"
-  public_key = file("~/.ssh/lighthouse_key.pub")
+  public_key = file(pathexpand(var.ssh_public_key_path))
 
 }
 # Lighhouse EC2 Instance 
@@ -191,6 +187,7 @@ resource "google_compute_instance" "vm_instance" {
     email = null
     # This scope allows the VM to interact with all Google Cloud services 
     # that the Service Account has IAM permissions for.
+    # Replace with a dedicated least-privilege service account before any non-demo use.
     scopes = ["cloud-platform"]
   }
 }
@@ -210,7 +207,7 @@ resource "google_compute_firewall" "allow_internal" {
   }
 
   # Only allow traffic from within our own network and Google health checks
-  source_ranges = ["10.2.1.0/24", "35.191.0.0/16", "130.211.0.0/22", "0.0.0.0/0"]
+  source_ranges = ["10.2.1.0/24", "35.191.0.0/16", "130.211.0.0/22", var.admin_cidr]
 }
 
 
