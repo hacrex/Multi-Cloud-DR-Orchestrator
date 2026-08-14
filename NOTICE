@@ -1,0 +1,1 @@
+This portfolio project is a reference implementation inspired by cross-cloud disaster-recovery patterns. It is not a complete production failover product. Validate data replication, DNS, identity, application dependencies, and recovery objectives with your organisation before use.

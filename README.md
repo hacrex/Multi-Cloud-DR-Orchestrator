@@ -40,6 +40,9 @@ During testing, GCP `e2-micro` instances (1GB RAM) faced API timeouts. I resolve
 - Implemented security best practices using `.gitignore` to prevent credential leakage.
 
 ## 📖 How to Use
+
+See [`docs/DR_DRILL.md`](docs/DR_DRILL.md) for the safe plan-first drill procedure.
+
 1. Clone the repo.
 2. Initialize with `terraform init`.
 3. Deploy the primary site: `terraform apply`.
@@ -49,7 +52,3 @@ During testing, GCP `e2-micro` instances (1GB RAM) faced API timeouts. I resolve
 - **Zero-Cost Standby:** Using Terraform `count`, the GCP compute and subnetwork resources incur $0.00 cost during normal operations.
 - **Free-Tier Friendly:** Architected to run entirely within AWS and GCP Free Tiers (t2.micro and e2-micro).
 - **Resource Slimming:** Custom K3s flags reduce the memory footprint to fit within 1GB RAM constraints.
-## 🛠️ Functional Templates
-This repository includes production-ready templates to get started quickly:
-- **Terraform**: Located in `terraform/templates/` for cluster and provider setup.
-- **Kubernetes**: Located in `kubernetes/manifests/` for application deployment and security policies.

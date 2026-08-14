@@ -1,0 +1,6 @@
+# Copy to terraform.tfvars and replace with a disposable test environment.
+gcp_project_id = "replace-with-gcp-project-id"
+gcp_region     = "us-central1"
+aws_profile    = "replace-with-aws-profile"
+aws_region     = "us-east-1"
+dr_mode_active = false
